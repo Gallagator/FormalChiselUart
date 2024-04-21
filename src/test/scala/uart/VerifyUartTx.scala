@@ -9,7 +9,7 @@ import chisel3.util._
 
 class VerifyUartTx extends AnyFlatSpec with ChiselScalatestTester with Formal {
   "UartTx" should "pass bmc" in {
-    verify(new UartTx(8, None, One()), Seq(BoundedCheck(11)))
+    verify(new UartTx(8, None, One()), Seq(BoundedCheck(15)))
   }
 }
 

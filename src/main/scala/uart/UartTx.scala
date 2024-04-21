@@ -27,8 +27,6 @@ class UartTx(width: Int, parity: Option[Parity], stopBits: StopBits)
       idle := false.B
       outbuf := false.B // Start bit
       shiftreg := Cat(stopData, data)
-      assert(bitIdx.value === 0.U)
-      assert(out === 1.U)
     }.otherwise {
       outbuf := shiftreg(0)
       shiftreg := shiftreg >> 1
@@ -41,6 +39,17 @@ class UartTx(width: Int, parity: Option[Parity], stopBits: StopBits)
   out := outbuf
 
   /* Formal */
-  assert(past(en) && !past(idle) && out === past(shiftreg(0)))
-  assert(idle && out === true.B)
+  when(en && idle) {
+    assert(bitIdx.value === 0.U)
+    assert(out === 1.U)
+  }
+  /* After every non-idle clock, shift out uart bit. */
+  when(past(en) && !past(idle)) {
+    assert(out === past(shiftreg(0)))
+  }
+  when(idle) {
+    assert(out === true.B)
+  }
+
+  // TODO implement parity. Do formal for stop bits and parity
 }
